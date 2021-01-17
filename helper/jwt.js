@@ -2,13 +2,14 @@ var jwt = require("jsonwebtoken"),
     knex = require("./knex");
 
 function verifyToken(req, res, next) {
-    var token = String(req.cookies.jwt);
+    const bearerHeader = req.headers["authorization"];
     // headers["x-access-token"];
-    if (!token)
+    if (typeof bearerHeader === "undefined")
         return res
             .status(403)
             .send({ auth: false, message: "No token provided." });
 
+    const token = bearerHeader.split(" ")[1];
     jwt.verify(token, process.env.SECRET, function (err, decoded) {
         if (err)
             return res.status(500).send({
@@ -17,7 +18,7 @@ function verifyToken(req, res, next) {
             });
 
         // if everything good, save to request for use in other routes
-        req.user = { email: decoded.email, name: decoded.name };
+        req.user = { email: decoded.email, role : decoded.role };
         next();
     });
 }

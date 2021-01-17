@@ -61,9 +61,9 @@ const signin = async (req, res) => {
             throw new Error("User Not exist");
         } else {
             if (user[0].password === password) {
-                let token = generateToken(user[0].email, user[0].name);
-                res.cookie("jwt", token);
-                res.end();
+                let token = generateToken(user[0].email, user[0].role);
+                res.status(200).json({auth:true,token})
+                
             } else {
                 throw new Error("Password not Valide");
             }
